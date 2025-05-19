@@ -65,6 +65,7 @@ const HomeScreen = () => {
         data={products}
         renderItem={({ item, index }) => (<ProductCard item={item} handleLiked={handleLiked} /> )} 
         showsVerticalScrollIndicator={false}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={{
           paddingBottom: 150,
         }}

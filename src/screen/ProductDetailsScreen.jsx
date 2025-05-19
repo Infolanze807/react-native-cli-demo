@@ -1,8 +1,9 @@
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import LinearGradient from "react-native-linear-gradient";
 import Header from "../components/Header";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { CartContext } from "../context/CartContext";
 const imageUrl =
   "https://res.cloudinary.com/dlc5c1ycl/image/upload/v1710567613/vulb5bckiruhpzt2v8ec.png";
 
@@ -17,11 +18,20 @@ const colorsArray = [
 ];
 
 const ProductDetailsScreen = () => {
+  const navigation = useNavigation();
+  const { addToCart } = useContext(CartContext);
   const route = useRoute();
   const item = route.params.item;;
 
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
+
+  const handleAddToCart = (item) => {
+    item.size = selectedSize;
+    item.color = selectedColor;
+    addToCart(item);
+    navigation.navigate("CART");
+  };
 
   return (
     <LinearGradient
@@ -42,9 +52,10 @@ const ProductDetailsScreen = () => {
         </View>
         <Text style={[styles.title, styles.sizeText]}>Size</Text>
         <View style={styles.sizeContainer}>
-          {sizes.map((size) => {
+          {sizes.map((size, index) => {
             return (
               <TouchableOpacity
+                key={index}
                 style={styles.sizeValueContainer}
                 onPress={() => {
                   setSelectedSize(size);
@@ -64,9 +75,10 @@ const ProductDetailsScreen = () => {
         </View>
         <Text style={[styles.title, styles.colorText]}>Colors</Text>
         <View style={styles.colorContainer}>
-          {colorsArray.map((color) => {
+          {colorsArray.map((color, index) => {
             return (
               <TouchableOpacity
+                key={index}
                 onPress={() => {
                   setSelectedColor(color);
                 }}
@@ -83,7 +95,9 @@ const ProductDetailsScreen = () => {
             );
           })}
         </View>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => {
+          handleAddToCart(item)
+        }}>
           <Text style={styles.buttonText}>Add to cart</Text>
         </TouchableOpacity>
       </ScrollView>
